@@ -799,6 +799,11 @@ class FuelMap:
         NewFile.MNH_INT = "4"
         NewFile.MNH_cleanly_closed = "yes"
         NewFile.MNH_REDUCE_DIMENSIONS_IN_FILES = "1"
+        # Mandatory for files declaring MesoNH >= 5.7.1: IO_Check_precision_loss_nc4
+        # (mode_io_file_nc4.f90) aborts the run when it is absent. "0" means no
+        # reduction of float precision, which is what this writer does.
+        NewFile.MNH_REDUCE_FLOAT_PRECISION = "0"
+        NewFile.MNH_COMPRESS_LOSSY = "0"
 
         NewFile.createDimension("X", self.nx)
         NewFile.createDimension("Y", self.ny)
@@ -964,6 +969,11 @@ class FuelMap:
         NewFile.MNH_INT = "4"
         NewFile.MNH_cleanly_closed = "yes"
         NewFile.MNH_REDUCE_DIMENSIONS_IN_FILES = "1"
+        # Mandatory for files declaring MesoNH >= 5.7.1: IO_Check_precision_loss_nc4
+        # (mode_io_file_nc4.f90) aborts the run when it is absent. "0" means no
+        # reduction of float precision, which is what this writer does.
+        NewFile.MNH_REDUCE_FLOAT_PRECISION = "0"
+        NewFile.MNH_COMPRESS_LOSSY = "0"
 
         NewFile.createDimension("X", self.nx)
         NewFile.createDimension("Y", self.ny)
