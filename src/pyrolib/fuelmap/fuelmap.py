@@ -7,7 +7,7 @@ from math import pow, sqrt
 from shutil import copy2
 
 import numpy as np
-import pkg_resources
+from importlib.resources import files
 import yaml
 from netCDF4 import Dataset
 import f90nml
@@ -98,10 +98,8 @@ class FuelMap:
 
         # Read default values for MNHBLAZE namelist from Default_MNH_namelist.yml
         # Values should be compliant with default_desfmn.f90
-        defaultpath = pkg_resources.resource_stream(
-            "pyrolib", "/".join(("data", "Default_MNH_namelist.yml"))
-        )
-        with open(defaultpath.name, "r") as ymlfile:
+        defaultpath = files("pyrolib").joinpath("data/Default_MNH_namelist.yml")
+        with defaultpath.open("r") as ymlfile:
             alldata = yaml.safe_load(ymlfile)
         current_version = f"v{self.mnh_version.replace('.', '')}"
         # set default value for namelist variables

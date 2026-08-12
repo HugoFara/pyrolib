@@ -5,7 +5,7 @@ import os
 import sys
 import errno
 
-import pkg_resources
+from importlib.resources import files
 import yaml
 
 from .fuels import (
@@ -35,8 +35,8 @@ class FuelDatabase:
 
         # Check default case
         try:
-            defaultpath = pkg_resources.resource_stream("pyrolib", "/".join(("data/fuel_db", fname)))
-            defaultexists = os.path.exists(defaultpath.name)
+            defaultpath = files("pyrolib").joinpath(f"data/fuel_db/{fname}")
+            defaultexists = defaultpath.is_file()
         except:
             defaultexists = False
 
@@ -52,7 +52,7 @@ class FuelDatabase:
                 FilePath = fname
             else:
                 print(f"INFO : pyrolib fuel database <{fname}> loaded")
-                FilePath = defaultpath.name
+                FilePath = str(defaultpath)
         else:
             if localexists:
                 print(f"INFO : Local fuel database <{fname}> loaded")
