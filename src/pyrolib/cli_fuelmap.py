@@ -4,7 +4,7 @@
 import os
 
 import click
-import pkg_resources
+from importlib.resources import files
 import yaml
 
 from pyrolib import __name__ as pyrolib_name
@@ -38,16 +38,15 @@ def main_cli():
 @click.option("-s", "--short", is_flag=True, default=True, help="print database content")
 def list_fuel_databases(short):
     """List fuel databases available in pyrolib"""
-    data_dir_content = pkg_resources.resource_listdir("pyrolib", "data/fuel_db")
-    data_dir_content.sort()
+    data_dir = files("pyrolib").joinpath("data/fuel_db")
+    data_dir_content = sorted(entry.name for entry in data_dir.iterdir())
     print("----- pyrolib available database -----")
     for file in data_dir_content:
         if file.endswith(".yml"):
             print(f"  * {file.replace('.yml','')}")
             if short:
                 # print db fuels
-                defaultpath = pkg_resources.resource_stream("pyrolib", "/".join(("data/fuel_db", file)))
-                with open(defaultpath.name, "r") as ymlfile:
+                with data_dir.joinpath(file).open("r") as ymlfile:
                     alldata = yaml.safe_load(ymlfile)
                 for fuel_description in alldata["fuels"].keys():
                     print(f"    < {fuel_description} > available for:")
