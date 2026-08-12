@@ -16,21 +16,21 @@ Subpackages
    pyrolib.blaze
    pyrolib.data_processing
 
-.. Submodules
-.. ----------
+Submodules
+----------
 
-.. pyrolib.cli fuelmap
-.. -------------------
+pyrolib.cli\_fuelmap module
+---------------------------
 
-.. .. automodule:: pyrolib.cli_fuelmap
-..    :members:
-..    :undoc-members:
-..    :show-inheritance:
+.. automodule:: pyrolib.cli_fuelmap
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
-.. lemmings.cli post
-.. -----------------
+pyrolib.cli\_post module
+------------------------
 
-.. .. automodule:: pyrolib.cli_post
-..    :members:
-..    :undoc-members:
-..    :show-inheritance:
+.. automodule:: pyrolib.cli_post
+   :members:
+   :undoc-members:
+   :show-inheritance:

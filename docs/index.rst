@@ -2,6 +2,8 @@
 
 .. documentation master file
 
+Pyrolib documentation
+=====================
 
 *Welcome to the pyrolib documentation.*
 
@@ -9,15 +11,13 @@
   :maxdepth: 2
 
   readme_copy
-  redirect.rst
+  redirect
   changelog_copy
 
 .. _header-n3:
 
-Pyrolib documentation
-=====================
-
-
+Indices and tables
+==================
 
 * :ref:`genindex`
 * :ref:`modindex`

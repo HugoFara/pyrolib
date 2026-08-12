@@ -79,7 +79,7 @@ class FuelMap:
     namelistname : str, optional
         MesoNH namelist name (default: 'EXSEG1.nam').
     MesoNHversion : str, optional
-            Version of MesoNH needed (>=5.6.0) (default: '5.6.0')
+            Version of MesoNH needed (>=5.6.0) (default: '6.1.0')
 
 
     """
@@ -88,7 +88,7 @@ class FuelMap:
         self,
         fuel_db: FuelDatabase,
         namelistname: str = "EXSEG1.nam",
-        MesoNHversion: str = "5.6.0",
+        MesoNHversion: str = "6.1.0",
         workdir: str = "",
     ):
         self.fuel_db = fuel_db
@@ -109,7 +109,7 @@ class FuelMap:
         self.nrefiny = alldata[current_version]["nrefiny"]
 
         # Default values
-        self.xfiremeshsize = np.array([0, 0])  # Fire mesh size (dxf, dyf)
+        self.xfiremeshsize = np.array([0.0, 0.0])  # Fire mesh size (dxf, dyf)
         self.firemeshsizes = None
         self.xfiremesh = None
         self.yfiremesh = None
@@ -188,7 +188,7 @@ class FuelMap:
         MNHData.close()
 
         self.xfiremeshsize[0] = float(self.xhat[1] - self.xhat[0]) / float(self.nrefinx)
-        self.xfiremeshsize[1] = float(self.yhat[1] - self.yhat[0]) / float(self.nrefinx)
+        self.xfiremeshsize[1] = float(self.yhat[1] - self.yhat[0]) / float(self.nrefiny)
         self.firemeshsizes = [self.nx * self.nrefinx, self.ny * self.nrefiny]
         # Get mesh position of fuel cells
         self.xfiremesh = np.linspace(
@@ -231,7 +231,8 @@ class FuelMap:
         - Unburnable : Specify that the patch can not burn (ROS = 0 m s-1 in that area).
 
 
-        .. aafig::
+        .. code-block:: text
+
             +--------------------------------------------------+
             │MesoNH domain                                     │
             │                                                  │
@@ -291,7 +292,8 @@ class FuelMap:
         The fuel assigned depends on its index and the selected rate of spread parameterization in the Méso-NH namelist.
 
 
-        .. aafig::
+        .. code-block:: text
+
             +--------------------------------------------------+
             │MesoNH domain                                     │
             │                                                  │
@@ -333,7 +335,8 @@ class FuelMap:
         It specifies that the patch can not burn (ROS = 0 m s-1 in that area).
 
 
-        .. aafig::
+        .. code-block:: text
+
             +--------------------------------------------------+
             │MesoNH domain                                     │
             │                                                  │
@@ -375,7 +378,8 @@ class FuelMap:
         It specifies an ignition time for the whole patch.
 
 
-        .. aafig::
+        .. code-block:: text
+
             +--------------------------------------------------+
             │MesoNH domain                                     │
             │                                                  │
@@ -438,7 +442,8 @@ class FuelMap:
         The mask is determined by a bresenham algorithm.
 
 
-        .. aafig::
+        .. code-block:: text
+
             +--------------------------------------------------+
             │MesoNH domain                                     │
             │                                                  │
@@ -495,7 +500,8 @@ class FuelMap:
         The mask is determined by a bresenham algorithm.
 
 
-        .. aafig::
+        .. code-block:: text
+
             +--------------------------------------------------+
             │MesoNH domain                                     │
             │                                                  │
@@ -538,7 +544,8 @@ class FuelMap:
         The mask is determined by a bresenham algorithm.
 
 
-        .. aafig::
+        .. code-block:: text
+
             +--------------------------------------------------+
             │MesoNH domain                                     │
             │                                                  │
@@ -582,7 +589,8 @@ class FuelMap:
         The mask is determined by a bresenham algorithm.
 
 
-        .. aafig::
+        .. code-block:: text
+
             +--------------------------------------------------+
             │MesoNH domain                                     │
             │                                                  │
@@ -622,7 +630,8 @@ class FuelMap:
         The mask is determined by a bresenham algorithm.
 
 
-        .. aafig::
+        .. code-block:: text
+
             +--------------------------------------------------+
             │MesoNH domain                                     │
             │                                                  │
@@ -797,20 +806,31 @@ class FuelMap:
         NewFile.createDimension("size3", 3)
         NewFile.createDimension("char16", 16)
 
-        MNHversion = np.array(self.mnh_version.split("."), dtype=int)
-        varia = NewFile.createVariable("MNHVERSION", int, ("size3"), fill_value=-2147483647)
+        # MesoNH stores integers on 4 bytes (see the MNH_INT attribute above).
+        MNHversion = np.array(self.mnh_version.split("."), dtype=np.int32)
+
+        # Since MesoNH 6.0.0 the version is read from these global attributes
+        # (IO_mnhversion_attributes_read_nc4). The variables below are the
+        # legacy fallback used by older versions.
+        NewFile.MNH_VERSION = MNHversion
+        NewFile.MNH_VERSION_STR = self.mnh_version
+        NewFile.MNH_VERSION_USER = ""
+
+        varia = NewFile.createVariable("MNHVERSION", np.int32, ("size3"), fill_value=-2147483647)
         varia.long_name = "MesoNH version"
         varia.valid_min = np.intc(-2147483646)
         varia.valid_max = np.intc(2147483647)
         varia[:] = MNHversion
 
-        varia = NewFile.createVariable("MASDEV", int, ())
+        # MASDEV packs major and minor as read back by IO_Mnhversion_get:
+        # major * 10 + minor, or major * 100 + minor for minor >= 10.
+        varia = NewFile.createVariable("MASDEV", np.int32, ())
         varia.long_name = "MesoNH version (without bugfix)"
-        varia = MNHversion[0]
+        varia[...] = MNHversion[0] * (100 if MNHversion[1] >= 10 else 10) + MNHversion[1]
 
-        varia = NewFile.createVariable("BUGFIX", int, ())
+        varia = NewFile.createVariable("BUGFIX", np.int32, ())
         varia.long_name = "MesoNH bugfix number"
-        varia = MNHversion[1]
+        varia[...] = MNHversion[2]
 
         varia = NewFile.createVariable("STORAGE_TYPE", "c", ("char16"))
         varia.long_name = "STORAGE_TYPE"
@@ -952,20 +972,31 @@ class FuelMap:
         NewFile.createDimension("size3", 3)
         NewFile.createDimension("char16", 16)
 
-        MNHversion = np.array(self.mnh_version.split("."), dtype=int)
-        varia = NewFile.createVariable("MNHVERSION", int, ("size3"), fill_value=-2147483647)
+        # MesoNH stores integers on 4 bytes (see the MNH_INT attribute above).
+        MNHversion = np.array(self.mnh_version.split("."), dtype=np.int32)
+
+        # Since MesoNH 6.0.0 the version is read from these global attributes
+        # (IO_mnhversion_attributes_read_nc4). The variables below are the
+        # legacy fallback used by older versions.
+        NewFile.MNH_VERSION = MNHversion
+        NewFile.MNH_VERSION_STR = self.mnh_version
+        NewFile.MNH_VERSION_USER = ""
+
+        varia = NewFile.createVariable("MNHVERSION", np.int32, ("size3"), fill_value=-2147483647)
         varia.long_name = "MesoNH version"
         varia.valid_min = np.intc(-2147483646)
         varia.valid_max = np.intc(2147483647)
         varia[:] = MNHversion
 
-        varia = NewFile.createVariable("MASDEV", int, ())
+        # MASDEV packs major and minor as read back by IO_Mnhversion_get:
+        # major * 10 + minor, or major * 100 + minor for minor >= 10.
+        varia = NewFile.createVariable("MASDEV", np.int32, ())
         varia.long_name = "MesoNH version (without bugfix)"
-        varia = MNHversion[0]
+        varia[...] = MNHversion[0] * (100 if MNHversion[1] >= 10 else 10) + MNHversion[1]
 
-        varia = NewFile.createVariable("BUGFIX", int, ())
+        varia = NewFile.createVariable("BUGFIX", np.int32, ())
         varia.long_name = "MesoNH bugfix number"
-        varia = MNHversion[1]
+        varia[...] = MNHversion[2]
 
         varia = NewFile.createVariable("STORAGE_TYPE", "c", ("char16"))
         varia.long_name = "STORAGE_TYPE"

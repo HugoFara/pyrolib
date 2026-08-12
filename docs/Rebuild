@@ -1,3 +1,8 @@
+#!/bin/sh
+# Regenerate the API reference from the sources, then build the HTML docs.
+# Run from the docs/ directory: sh Rebuild
+set -e
+
 rm -rf api
-sphinx-apidoc ../src/pyrolib -o ./api --module-first  --no-toc
+sphinx-apidoc ../src/pyrolib -o ./api --module-first --no-toc
 make html

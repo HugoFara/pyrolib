@@ -1,0 +1,93 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyrolib"
+dynamic = ["version"]
+description = "Python tools for MesoNH-Blaze model"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [
+    { name = "Aurélien Costes", email = "aurelien.costes31@gmail.com" },
+]
+maintainers = [
+    { name = "Aurélien Costes", email = "aurelien.costes31@gmail.com" },
+]
+keywords = [
+    "Blaze fire model",
+    "Méso-NH",
+    "wildfire",
+    "fuel map",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Atmospheric Science",
+]
+dependencies = [
+    "numpy>=1.23",
+    "netCDF4>=1.6",
+    "PyYAML>=6.0",
+    "f90nml>=1.4",
+    "click>=8.0",
+]
+
+[project.optional-dependencies]
+tests = ["pytest>=7.0"]
+docs = [
+    "sphinx>=7.0",
+    "myst-parser>=2.0",
+    "sphinx_rtd_theme>=3.0",
+]
+numba = ["numba>=0.61"]
+
+[project.scripts]
+pyrolib-fm = "pyrolib.cli_fuelmap:main_cli"
+pyrolib-post = "pyrolib.cli_post:main_cli"
+
+[project.urls]
+Homepage = "https://github.com/Aurel31/pyrolib/"
+Documentation = "https://pyrolib.readthedocs.io/en/latest/"
+Repository = "https://github.com/Aurel31/pyrolib/"
+Changelog = "https://github.com/Aurel31/pyrolib/blob/main/CHANGELOG.md"
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.dynamic]
+version = { attr = "pyrolib.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pyrolib = [
+    "data/*.yml",
+    "data/*.yaml",
+    "data/fuel_db/*.yml",
+    "data/fuel_db/*.yaml",
+]
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+
+[tool.ruff]
+line-length = 110
+target-version = "py310"
+extend-exclude = ["docs", "examples"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B"]
+# sind/cosd in fuelmap/utility.py are deliberately terse lambdas.
+ignore = ["E731"]

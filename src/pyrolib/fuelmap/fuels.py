@@ -210,7 +210,7 @@ class BaseFuel(ABC):
         -------
 
         out : numpy.ndarray
-            array of [fuel index, *properties_value]
+            array of ``[fuel index, *properties_value]``
         """
         PropertyVector = np.zeros(nbofproperties)
         PropertyVector[0] = fuelindex
