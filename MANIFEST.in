@@ -1,1 +1,18 @@
 graft src
+graft tests
+recursive-include examples *.py *.yml *.nam *.nc *.des
+
+include LICENSE
+include README.md
+include CHANGELOG.md
+include Makefile
+
+global-exclude __pycache__
+global-exclude *.py[cod]
+global-exclude *.so
+global-exclude .DS_Store
+
+# artefacts left behind by a crashed functional test run
+exclude examples/fuel_map/FuelMap.nc
+exclude examples/fuel_map/FuelMap2d.nc
+exclude examples/fuel_map/FuelMap.des

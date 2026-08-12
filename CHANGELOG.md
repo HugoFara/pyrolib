@@ -5,6 +5,37 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
 
+## [0.5.0] 2026 / 08 / 12
+**Warning**: the default `Méso-NH` version is now `6.1.0`. Runs targeting `5.6.0`
+must pass `MesoNHversion="5.6.0"` explicitly to `FuelMap`.
+
+### Added
+- support for `Méso-NH` `6.1.0` (`v610` entry in `Default_MNH_namelist.yml`).
+  The `FuelMap.nc` format itself is unchanged: `FIRE_READFUEL` in `Méso-NH` `6.1.0`
+  reads the same field names, units and property order.
+- `numba` is now declared as an optional extra (`pip install pyrolib[numba]`).
+
+### Changed
+- packaging moved from `setup.py`/`setup.cfg` to `pyproject.toml` (PEP 621).
+- Python `3.10` to `3.13` are supported; `3.8` and `3.9` are dropped.
+- the `numpy < 2.0`, `netCDF4 < 2.0` and `scipy < 2.0` ceilings are lifted;
+  `pyrolib` works with `numpy` 2.x.
+- documentation build modernised: `myst-parser` replaces the archived
+  `recommonmark`, and `.readthedocs.yaml` uses the current `build.os` schema.
+- default `Méso-NH` version is `6.1.0`.
+
+### Removed
+- `scipy` dependency (it was never imported).
+- `bresenham` dependency, inlined into `pyrolib.fuelmap.patch` (MIT, Petr Viktorin).
+
+### Bug fix
+- fire mesh size is no longer truncated to whole metres (the array holding it was
+  of integer dtype).
+- the fire mesh size on the y axis used the x refinement ratio `nrefinx`
+  instead of `nrefiny`.
+- `FireFluxI` thermocouple failure masking used `and` between two arrays, which
+  raised `ValueError: truth value of an array ... is ambiguous`.
+
 ## [0.4.1] 2022 / 09 / 21
 ### Changed
 - Default version is 5.6.0

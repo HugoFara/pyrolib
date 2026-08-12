@@ -176,7 +176,7 @@ class SonicTower:
         if endoffailtime is None:
             self.Tcfine[timevector >= failtime] = np.nan
         else:
-            self.Tcfine[timevector >= failtime and timevector <= endoffailtime] = np.nan
+            self.Tcfine[(timevector >= failtime) & (timevector <= endoffailtime)] = np.nan
 
 
 class _TcData:

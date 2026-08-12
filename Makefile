@@ -1,20 +1,31 @@
+.PHONY: doc test lint format clean build wheel upload_test upload
+
 doc:
-	rm -r docs/_build
-	cd docs && make html
+	rm -rf docs/_build
+	$(MAKE) -C docs html
 
 test:
-	pytest #--cov=nobvisual
+	pytest
 
 lint:
-	pylint src/pyrolib
+	ruff check src tests
 
-wheel:
-	rm -rf build
-	rm -rf dist
-	python setup.py sdist bdist_wheel
+format:
+	ruff format src tests
 
-upload_test:
-	twine upload --repository-url https://test.pypi.org/pyrolib/ dist/*
+clean:
+	rm -rf build dist src/*.egg-info
 
-upload:
+build: clean
+	python -m build
+
+# kept as an alias for muscle memory
+wheel: build
+
+upload_test: build
+	twine check --strict dist/*
+	twine upload --repository testpypi dist/*
+
+upload: build
+	twine check --strict dist/*
 	twine upload dist/*

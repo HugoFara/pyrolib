@@ -1,5 +1,0 @@
-recommonmark
-sphinx_rtd_theme
-sphinx-markdown-tables
-setuptools
-aafigure

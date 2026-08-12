@@ -7,7 +7,7 @@
 # `pyrolib`
 
 
-`pyrolib` is a tool library for `Méso-NH/Blaze` model.
+`pyrolib` is a tool library for the [`Méso-NH/Blaze`](https://src.koda.cnrs.fr/mesonh/mesonh-code) model.
 `pyrolib` provides python tools for the following purposes:
 
 - Generation of the `FuelMap.nc` file by using a `Méso-NH` namelist and the initialisation file of a `Méso-NH/Blaze` run.
@@ -17,10 +17,16 @@
 
 ## Installation
 
-Install `pyrolib` from PyPI's:
+`pyrolib` requires Python `3.10` or newer. Install it from PyPI:
 
 ```bash
 pip install pyrolib
+```
+
+Some operations on the fire mesh can be accelerated with `numba`, which is optional:
+
+```bash
+pip install pyrolib[numba]
 ```
 
 ## Usage
@@ -28,7 +34,7 @@ pip install pyrolib
 `pyrolib` is separated into several sub-libraries for each of the objectives mentioned above, respectively:
 
 - `pyrolib.fuelmap`
-- `pyrolib.firefluxpost`
+- `pyrolib.data_processing`
 - `pyrolib.blaze`
 
 ### Fuel database
@@ -48,7 +54,15 @@ A user database can be saved in a `.yml` file. See example `examples/fuel_databa
 
 ## `Méso-NH` compliance
 
-The current version of `pyrolib` is compliant with `Méso-NH` from version `5.6.0` to version `5.6.0`.
+The current version of `pyrolib` is compliant with `Méso-NH` from version `5.6.0` to version `6.1.0`.
+The default is `6.1.0`; to target an older release, pass the version explicitly:
+
+```python
+FuelMap(fuel_db=my_db, MesoNHversion="5.6.0")
+```
+
+`Méso-NH` sources are hosted at <https://src.koda.cnrs.fr/mesonh/mesonh-code>.
+
 ## Acknowledgements
 
 This library is part of the `ANR FireCaster` project (2017-2021, `ANR-16-CE04-0006, FIRECASTER`).
