@@ -7,11 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 ### Bug fix
-- `convert_lon_lat_to_x_y` built the Mercator isometric latitude with a base-2
-  logarithm instead of the natural one, so every `y` coordinate came out too large
-  by a factor `log2(e)` (about `1.4427`). Patches positioned in lon/lat
-  (`is_cartesian=False`) were placed off by that factor; `x` was unaffected. The
-  values now match `SM_XYHAT_S` in `Méso-NH` `mode_gridproj.f90`.
+- `convert_lon_lat_to_x_y` used a base-2 logarithm instead of the natural one, so
+  patches positioned in lon/lat were placed off by a factor `log2(e)` on the `y`
+  axis.
 
 ## [0.5.0] 2026 / 08 / 12
 **Warning**: the default `Méso-NH` version is now `6.1.0`. Runs targeting `5.6.0`
